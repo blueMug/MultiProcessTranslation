@@ -36,7 +36,10 @@ class Translate:
 
         results = []
         for translation in translations:
-            translation = translation.text
+            try:
+                translation = translation.text
+            except:
+                print('translate error...')
             results.append(translation)
 
         return results
