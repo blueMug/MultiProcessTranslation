@@ -27,17 +27,17 @@ parser.add_argument('--max_try', type=int, default=3,
 
 
 class MultiProcessTranslation:
-    def __init__(self, src='en', target='zh-cn'):
-        self.translator = Translate(src, target)
+    def __init__(self, client_url, src='en', target='zh-cn'):
+        self.translator = Translate(client_url, src, target)
 
-    def _translate(self, sentences, index, tbatch=5, max_try=3):
+    def _translate(self, sentences, index, tbatch, max_try):
         output_list = []
         all_len = len(sentences)
         for i in range(0, all_len, tbatch):
             output_list.extend(self.translator.translate_batch(sentences[i: i + tbatch], max_try))
         return output_list, index
 
-    def trans_all_processes(self, sentences, process_num=5, tbatch=5, max_try=3) -> list:
+    def trans_all_processes(self, sentences, process_num, tbatch, max_try) -> list:
         """
         :param sentences:
         :param process_num:
@@ -48,6 +48,8 @@ class MultiProcessTranslation:
         processes = []
         pool = multiprocessing.Pool(process_num)
         step = int(len(sentences) / process_num)
+        if step == 0:  # 总的翻译句子数小于进程数，则一个进程处理全部翻译
+            step = len(sentences)
         for i in range(0, len(sentences), step):
             processes.append(pool.apply_async(func=self._translate, args=(sentences[i:i + step], i, tbatch, max_try)))
         pool.close()
@@ -100,7 +102,13 @@ class MultiProcessTranslation:
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    mpt = MultiProcessTranslation(src=args.srclg, target=args.trglg)
+    url_client_file = 'client.config'
+    client_url = []
+    if os.path.exists(url_client_file):
+        client_url = futil.read_txt(url_client_file)
+    if len(client_url) == 0:
+        client_url = ['translate.google.cn']
+    mpt = MultiProcessTranslation(client_url, src=args.srclg, target=args.trglg)
     index_file = args.input+'.index'
     if os.path.exists(index_file):
         index = int(futil.read_txt(index_file)[0])

@@ -3,8 +3,8 @@ import time
 
 
 class Translate:
-    def __init__(self, src='en', target='zh-cn'):
-        self.translator = Translator()
+    def __init__(self, client, src='en', target='zh-cn', ):
+        self.translator = Translator(client)
         self.src = src
         self.trg = target
 
