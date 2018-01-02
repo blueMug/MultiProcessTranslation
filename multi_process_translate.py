@@ -86,6 +86,7 @@ class MultiProcessTranslation:
         """
         translations = []
         all_len = len(sentences)
+        count = begin
         for i in range(0, all_len, pbatch):
             translate_start = time.time()
             batch_translations = self.trans_all_processes(sentences[i: i + pbatch], process_num=process_num,
@@ -97,7 +98,8 @@ class MultiProcessTranslation:
                 print(e)
             if output_file:
                 futil.add_to_txt(output_file, batch_translations)
-                futil.save_to_txt(index_file, [str(begin+len(batch_translations))])
+                count += len(batch_translations)
+                futil.save_to_txt(index_file, [str(count)])
             else:
                 translations.extend(batch_translations)
         return translations
