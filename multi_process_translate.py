@@ -91,10 +91,13 @@ class MultiProcessTranslation:
             batch_translations = self.trans_all_processes(sentences[i: i + pbatch], process_num=process_num,
                                                           tbatch=tbatch, max_try=max_try)
             translate_end = time.time()
-            print('翻译用时 %d, %d -> %s' % ((translate_end-translate_start), begin + i, batch_translations[:1]))
+            try:
+                print('翻译用时 %d, %d -> %s' % ((translate_end-translate_start), begin + i, batch_translations[:1]))
+            except Exception as e:
+                print(e)
             if output_file:
                 futil.add_to_txt(output_file, batch_translations)
-                futil.save_to_txt(index_file, str(begin+len(batch_translations)))
+                futil.save_to_txt(index_file, [str(begin+len(batch_translations))])
             else:
                 translations.extend(batch_translations)
         return translations
