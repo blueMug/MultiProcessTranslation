@@ -40,6 +40,7 @@ class Translate:
                 translation = translation.text
             except:
                 print('translate error...')
+                translation = ''
             results.append(translation)
 
         return results
