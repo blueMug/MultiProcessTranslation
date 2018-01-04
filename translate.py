@@ -38,7 +38,7 @@ class Translate:
                 results.append(translation)
         except:
             time.sleep(2.5)
-            print('translate retry for %d times...' % count)
+            print('translate retry for %d times...' % (count + 1))
             results = self.translate_batch(sentences, max_try, count=count + 1)
         finally:
             time.sleep(0.5)
