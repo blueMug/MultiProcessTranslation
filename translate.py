@@ -24,23 +24,23 @@ class Translate:
 
     def translate_batch(self, sentences, max_try=3, count=0):
         # sentences is list
+        results = []
         if count >= max_try:
-            return []
+            return results
         try:
             translations = self.translator.translate(sentences, dest=self.trg, src=self.src)
+            for translation in translations:
+                try:
+                    translation = translation.text
+                except:
+                    print('translate error...')
+                    translation = ''
+                results.append(translation)
         except:
-            time.sleep(5)
-            translations = self.translate_batch(sentences, max_try, count=count + 1)
+            time.sleep(2.5)
+            print('translate retry...')
+            results = self.translate_batch(sentences, max_try, count=count + 1)
         finally:
             time.sleep(0.5)
-
-        results = []
-        for translation in translations:
-            try:
-                translation = translation.text
-            except:
-                print('translate error...')
-                translation = ''
-            results.append(translation)
 
         return results
