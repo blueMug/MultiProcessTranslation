@@ -26,7 +26,7 @@ class Translate:
         # sentences is list
         results = []
         if count >= max_try:
-            return results
+            return ['' for _ in range(len(sentences))]
         try:
             translations = self.translator.translate(sentences, dest=self.trg, src=self.src)
             for translation in translations:
